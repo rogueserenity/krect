@@ -6,6 +6,8 @@
     "build": "esbuild src/main.ts --bundle --platform=neutral --target=es2020 --outfile=contents/code/main.js",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "check": "npm run typecheck && npm run lint",
     "prepare": "husky"
   },
   "repository": {
