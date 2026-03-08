@@ -9,6 +9,17 @@ export type SnapPosition =
 export const EDGE_CYCLE_COUNT = 3;
 export const SIXTH_CYCLE_COUNT = 6;
 
+export const ALL_SNAP_POSITIONS: SnapPosition[] = [
+  'left', 'right', 'top', 'bottom',
+  'top-left', 'top-right', 'bottom-left', 'bottom-right',
+  'center',
+  'sixth-1', 'sixth-2', 'sixth-3', 'sixth-4', 'sixth-5', 'sixth-6',
+];
+
+export function getCycleCount(position: SnapPosition): number {
+  return position.startsWith('sixth-') ? SIXTH_CYCLE_COUNT : EDGE_CYCLE_COUNT;
+}
+
 const CYCLE_FRACTIONS = [1 / 2, 2 / 3, 1 / 3] as const;
 
 function cycleWidth(workArea: Rect, cycleIndex: number): number {
