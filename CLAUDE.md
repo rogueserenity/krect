@@ -7,7 +7,8 @@ KWin script that replicates Rectangle window snapping for KDE Plasma 6. TypeScri
 - `npm run build` — bundle src/main.ts → contents/code/main.js
 - `npm test` — run Vitest unit tests
 - `npm run typecheck` — TypeScript type check (no emit)
-- `./node_modules/.bin/eslint src` — lint
+- `npm run lint` — eslint
+- `npm run check` — typecheck + lint together
 
 ## Key Conventions
 - **Conventional commits** enforced via commitlint + husky
