@@ -1,3 +1,4 @@
 [tools]
 gh = "latest"
 glow = "latest"
+node = "lts"
