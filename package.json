@@ -4,6 +4,8 @@
   "description": "Provide Rectangle-like window tiling shortcuts for KDE Plasma 6.",
   "scripts": {
     "build": "esbuild src/main.ts --bundle --platform=neutral --target=es2020 --outfile=contents/code/main.js",
+    "install-kwin": "npm run build && kpackagetool6 --type=KWin/Script -i ./",
+    "reload-kwin": "npm run build && kpackagetool6 --type=KWin/Script -u ./ && qdbus org.kde.KWin /KWin reconfigure",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
@@ -16,7 +18,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "bugs": {
     "url": "https://github.com/rogueserenity/krect/issues"
