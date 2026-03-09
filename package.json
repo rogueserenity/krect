@@ -1,0 +1,38 @@
+{
+  "name": "krect",
+  "version": "1.0.0",
+  "description": "Provide Rectangle-like window tiling shortcuts for KDE Plasma 6.",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --platform=neutral --target=es6 --outfile=contents/code/main.js",
+    "install-kwin": "npm run build && kpackagetool6 --type=KWin/Script -i ./",
+    "reload-kwin": "npm run build && kpackagetool6 --type=KWin/Script -u ./ && qdbus6 org.kde.KWin /KWin reconfigure",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "check": "npm run typecheck && npm run lint",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogueserenity/krect.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/rogueserenity/krect/issues"
+  },
+  "homepage": "https://github.com/rogueserenity/krect#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
+    "@eslint/js": "^10.0.1",
+    "esbuild": "^0.27.3",
+    "eslint": "^10.0.3",
+    "husky": "^9.1.7",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vitest": "^4.0.18"
+  }
+}

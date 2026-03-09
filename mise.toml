@@ -1,3 +1,29 @@
 [tools]
 gh = "latest"
 glow = "latest"
+node = "lts"
+
+[env]
+_.path = ["./node_modules/.bin"]
+
+[tasks.build]
+description = "Bundle TypeScript source into contents/code/main.js"
+run = "npm run build"
+
+[tasks.test]
+description = "Run Vitest unit tests"
+run = "npm test"
+
+[tasks.check]
+description = "Typecheck and lint"
+run = "npm run check"
+
+[tasks.install-kwin]
+alias = "i"
+description = "Build and install the KWin script (first time)"
+run = "npm run install-kwin"
+
+[tasks.reload-kwin]
+alias = "r"
+description = "Build, update, and reload the KWin script"
+run = "npm run reload-kwin"
