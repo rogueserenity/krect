@@ -1,10 +1,7 @@
 import type { Rect } from '../adapter.js';
+import { rectsEqual } from './geometry.js';
 import { getSnapGeometry, getWorkArea } from './cache.js';
 import type { WindowState } from './state.js';
-
-function rectsEqual(a: Rect, b: Rect): boolean {
-  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
-}
 
 export function getNextScreenIndex(currentIndex: number, totalScreens: number): number {
   return (currentIndex + 1) % totalScreens;

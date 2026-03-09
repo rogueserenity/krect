@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computeSnapGeometry } from '../core/geometry.js';
+import { computeSnapGeometry, rectsEqual } from '../core/geometry.js';
 import type { Rect } from '../adapter.js';
 
 const workArea: Rect = { x: 0, y: 0, width: 1920, height: 1080 };
@@ -94,6 +94,20 @@ describe('sixth snaps - tall screen (3x2)', () => {
     expect(computeSnapGeometry(tallWorkArea, 'sixth-1', 3)).toEqual({ x: 540, y: 640,  width: 540, height: 640 });
     expect(computeSnapGeometry(tallWorkArea, 'sixth-1', 4)).toEqual({ x: 0,   y: 1280, width: 540, height: 640 });
     expect(computeSnapGeometry(tallWorkArea, 'sixth-1', 5)).toEqual({ x: 540, y: 1280, width: 540, height: 640 });
+  });
+});
+
+describe('rectsEqual', () => {
+  it('returns true for identical rects', () => {
+    expect(rectsEqual({ x: 0, y: 0, width: 960, height: 540 }, { x: 0, y: 0, width: 960, height: 540 })).toBe(true);
+  });
+
+  it('returns false when any field differs', () => {
+    const r: Rect = { x: 0, y: 0, width: 960, height: 540 };
+    expect(rectsEqual(r, { ...r, x: 1 })).toBe(false);
+    expect(rectsEqual(r, { ...r, y: 1 })).toBe(false);
+    expect(rectsEqual(r, { ...r, width: 1 })).toBe(false);
+    expect(rectsEqual(r, { ...r, height: 1 })).toBe(false);
   });
 });
 

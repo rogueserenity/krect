@@ -1,15 +1,11 @@
 import type { Rect } from '../adapter.js';
-import { getCycleCount, type SnapPosition } from './geometry.js';
+import { getCycleCount, rectsEqual, type SnapPosition } from './geometry.js';
 import { getSnapGeometry } from './cache.js';
 import { computeNextCycleIndex, type WindowState } from './state.js';
 
 export interface SnapResult {
   geometry: Rect;
   newState: WindowState;
-}
-
-function rectsEqual(a: Rect, b: Rect): boolean {
-  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 }
 
 function isStateStale(currentState: WindowState, currentGeometry: Rect, screenIndex: number): boolean {

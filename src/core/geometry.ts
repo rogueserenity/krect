@@ -16,10 +16,15 @@ export const ALL_SNAP_POSITIONS: SnapPosition[] = [
   'sixth-1', 'sixth-2', 'sixth-3', 'sixth-4', 'sixth-5', 'sixth-6',
 ];
 
+export function rectsEqual(a: Rect, b: Rect): boolean {
+  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+}
+
 export function getCycleCount(position: SnapPosition): number {
   return position.startsWith('sixth-') ? SIXTH_CYCLE_COUNT : EDGE_CYCLE_COUNT;
 }
 
+// cycleIndex 0 = 1/2, 1 = 2/3, 2 = 1/3
 const CYCLE_FRACTIONS = [1 / 2, 2 / 3, 1 / 3] as const;
 
 function cycleWidth(workArea: Rect, cycleIndex: number): number {
