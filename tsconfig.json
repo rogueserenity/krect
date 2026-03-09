@@ -2,8 +2,8 @@
   "compilerOptions": {
     "rootDir": "./src",
     "module": "esnext",
-    "target": "es2020",
-    "lib": ["es2020"],
+    "target": "es6",
+    "lib": ["es6"],
     "moduleResolution": "bundler",
     "strict": true,
     "noUncheckedIndexedAccess": true,
