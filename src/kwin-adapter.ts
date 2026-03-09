@@ -4,6 +4,9 @@
 declare const workspace: any;
 declare function registerShortcut(name: string, desc: string, key: string, cb: () => void): void;
 
+// ClientAreaOption enum value for the maximize/work area (excludes panels)
+const MaximizeArea = 2;
+
 import type { KWinAdapter, Rect, Screen } from './adapter.js';
 
 function toRect(r: any): Rect {
@@ -32,7 +35,7 @@ export function createKWinAdapter(): KWinAdapter {
     isWindowMaximized(windowId: string): boolean {
       const win = findWindow(windowId);
       if (!win) return false;
-      const area = workspace.clientArea(workspace.MaximizeArea, win.output, win);
+      const area = workspace.clientArea(MaximizeArea, win.output);
       const g = win.frameGeometry;
       return Math.round(g.x) === Math.round(area.x) &&
              Math.round(g.y) === Math.round(area.y) &&
@@ -53,7 +56,7 @@ export function createKWinAdapter(): KWinAdapter {
     getScreens(): Screen[] {
       return (workspace.screens as any[]).map((output: any, index: number) => ({
         index,
-        workArea: toRect(workspace.clientArea(workspace.MaximizeArea, output)),
+        workArea: toRect(workspace.clientArea(MaximizeArea, output)),
       }));
     },
 
