@@ -35,12 +35,17 @@ export function createKWinAdapter(): KWinAdapter {
     isWindowMaximized(windowId: string): boolean {
       const win = findWindow(windowId);
       if (!win) return false;
-      const area = workspace.clientArea(workspace.MaximizeArea, win.output, workspace.currentDesktop);
-      const g = win.frameGeometry;
-      return Math.round(g.x) === Math.round(area.x) &&
-             Math.round(g.y) === Math.round(area.y) &&
-             Math.round(g.width) === Math.round(area.width) &&
-             Math.round(g.height) === Math.round(area.height);
+      try {
+        const area = workspace.clientArea(workspace.MaximizeArea, win.output, workspace.currentDesktop);
+        const g = win.frameGeometry;
+        return Math.round(g.x) === Math.round(area.x) &&
+               Math.round(g.y) === Math.round(area.y) &&
+               Math.round(g.width) === Math.round(area.width) &&
+               Math.round(g.height) === Math.round(area.height);
+      } catch (e) {
+        console.error('krect: isWindowMaximized failed', e);
+        return false;
+      }
     },
 
     unmaximizeWindow(windowId: string): void {
@@ -54,16 +59,21 @@ export function createKWinAdapter(): KWinAdapter {
     },
 
     getScreens(): Screen[] {
-      const screens: Screen[] = [];
-      const outputs = workspace.screens;
-      const count: number = outputs.length;
-      for (let i = 0; i < count; i++) {
-        screens.push({
-          index: i,
-          workArea: toRect(workspace.clientArea(workspace.MaximizeArea, outputs[i], workspace.currentDesktop)),
-        });
+      try {
+        const screens: Screen[] = [];
+        const outputs = workspace.screens;
+        const count: number = outputs.length;
+        for (let i = 0; i < count; i++) {
+          screens.push({
+            index: i,
+            workArea: toRect(workspace.clientArea(workspace.MaximizeArea, outputs[i], workspace.currentDesktop)),
+          });
+        }
+        return screens;
+      } catch (e) {
+        console.error('krect: getScreens failed', e);
+        return [];
       }
-      return screens;
     },
 
     getWindowScreen(windowId: string): number | null {
@@ -81,19 +91,28 @@ export function createKWinAdapter(): KWinAdapter {
     },
 
     onWindowClosed(callback: (windowId: string) => void): void {
-      workspace.windowRemoved.connect((win: any) => {
-        callback(win.internalId.toString());
-      });
+      try {
+        workspace.windowRemoved.connect((win: any) => {
+          callback(win.internalId.toString());
+        });
+      } catch (e) {
+        console.error('krect: onWindowClosed connect failed', e);
+      }
     },
 
     onScreenChanged(callback: () => void): void {
-      workspace.screensChanged.connect(callback);
-      workspace.virtualScreenGeometryChanged.connect(callback);
+      try {
+        workspace.screensChanged.connect(callback);
+        workspace.virtualScreenGeometryChanged.connect(callback);
+      } catch (e) {
+        console.error('krect: onScreenChanged connect failed', e);
+      }
     },
   };
 }
 
 function findWindow(windowId: string): any | null {
-  const wins: any[] = workspace.windowList();
+  const wins: any[] | null = workspace.windowList();
+  if (!wins) return null;
   return wins.find((w: any) => w.internalId.toString() === windowId) ?? null;
 }
