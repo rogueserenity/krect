@@ -12,7 +12,7 @@ KWin script that replicates Rectangle window snapping for KDE Plasma 6. TypeScri
 
 ## Key Conventions
 - **Conventional commits** enforced via commitlint + husky
-- **Never use `npx`** — use `./node_modules/.bin/<tool>` for local binaries
+- **Never use `npx`** — mise adds `./node_modules/.bin` to PATH, so run local binaries directly (e.g. `vitest`, `esbuild`)
 - **No `mise exec`** — shell is configured with mise activated, run tools directly
 - All KWin API calls go through `KWinAdapter` — core logic never touches KWin globals
 - `geometry.ts` is called only by `cache.ts` — all other modules use the cache
