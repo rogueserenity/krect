@@ -142,13 +142,25 @@ Track for each window:
 
 ### Shortcut List
 - Left, Right, Top, Bottom (4 shortcuts)
+- Left Third, Left Two Thirds, Right Third, Right Two Thirds (4 shortcuts) — direct-access entry points
+- Center Third, Center Two Thirds (2 shortcuts) — direct-access entry points
 - Top-Left, Top-Right, Bottom-Left, Bottom-Right (4 shortcuts)
 - Center (1 shortcut)
 - Sixth positions 1–6 (6 shortcuts)
 - Maximize (1 shortcut)
 - Next Display, Previous Display (2 shortcuts)
 
-**Total: 18 shortcuts**
+**Total: 24 shortcuts**
+
+### Notes on Cycling vs Direct-Access
+- Edge/corner/center snaps cycle through 1/2 → 2/3 → 1/3 on repeated presses
+- Left/Right/Center Third and Two-Thirds shortcuts are entry points into the same cycle at a specific position:
+  - Left Two Thirds (Meta+Ctrl+E) → starts at 2/3, then cycles 1/3 → 1/2 → 2/3…
+  - Left Third (Meta+Ctrl+D) → starts at 1/3, then cycles 1/2 → 2/3 → 1/3…
+  - Same for Right variants (Meta+Ctrl+T, Meta+Ctrl+G)
+  - Center Two Thirds (Meta+Ctrl+R) → starts at 2/3, then cycles 1/3 → 1/2 → 2/3…
+  - Center Third (Meta+Ctrl+F) → starts at 1/3, then cycles 1/2 → 2/3 → 1/3…
+- These mirror Rectangle's dedicated shortcuts (First Third, Last Third, First Two Thirds, Last Two Thirds)
 
 ---
 

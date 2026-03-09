@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { resolveSnap } from '../core/snap.js';
+import { resolveSnap, resolveSnapFrom } from '../core/snap.js';
 import { buildCache } from '../core/cache.js';
 import { clearWindowState } from '../core/state.js';
 import type { Screen } from '../adapter.js';
@@ -73,5 +73,70 @@ describe('resolveSnap', () => {
     // wraps back to 0
     const result = resolveSnap('sixth-1', state, 0);
     expect(result!.newState.cycleIndex).toBe(0);
+  });
+});
+
+describe('resolveSnapFrom', () => {
+  it('jumps to startIndex when no prior state', () => {
+    // left two-thirds: startIndex=1 → cycleIndex 1 = 2/3 width
+    const result = resolveSnapFrom('left', 1, undefined, 0);
+    expect(result).not.toBeNull();
+    expect(result!.newState.cycleIndex).toBe(1);
+    expect(result!.geometry).toEqual({ x: 0, y: 0, width: 1280, height: 1080 });
+  });
+
+  it('jumps to startIndex when prior position is different', () => {
+    const state: WindowState = { position: 'right', cycleIndex: 0, screen: 0 };
+    const result = resolveSnapFrom('left', 2, state, 0);
+    expect(result!.newState.cycleIndex).toBe(2);
+    expect(result!.geometry).toEqual({ x: 0, y: 0, width: 640, height: 1080 });
+  });
+
+  it('continues cycling when already at same position', () => {
+    const state: WindowState = { position: 'left', cycleIndex: 1, screen: 0 };
+    const snappedGeometry = { x: 0, y: 0, width: 1280, height: 1080 };
+    const result = resolveSnapFrom('left', 1, state, 0, snappedGeometry);
+    expect(result!.newState.cycleIndex).toBe(2);
+  });
+
+  it('wraps cycle when continuing from last index', () => {
+    const state: WindowState = { position: 'left', cycleIndex: 2, screen: 0 };
+    const snappedGeometry = { x: 0, y: 0, width: 640, height: 1080 };
+    const result = resolveSnapFrom('left', 1, state, 0, snappedGeometry);
+    expect(result!.newState.cycleIndex).toBe(0);
+  });
+
+  it('jumps to startIndex when state is stale (manual move)', () => {
+    const state: WindowState = { position: 'left', cycleIndex: 1, screen: 0 };
+    const manualGeometry = { x: 100, y: 100, width: 800, height: 600 };
+    const result = resolveSnapFrom('left', 1, state, 0, manualGeometry);
+    expect(result!.newState.cycleIndex).toBe(1);
+    expect(result!.geometry).toEqual({ x: 0, y: 0, width: 1280, height: 1080 });
+  });
+
+  it('startIndex wraps via modulo for out-of-range values', () => {
+    const result = resolveSnapFrom('left', 5, undefined, 0);
+    // cycleCount=3, 5%3=2
+    expect(result!.newState.cycleIndex).toBe(2);
+  });
+
+  it('returns null for unknown screen', () => {
+    expect(resolveSnapFrom('left', 1, undefined, 99)).toBeNull();
+  });
+
+  it('center two-thirds: jumps to cycleIndex 1 (2/3 width, centered)', () => {
+    const result = resolveSnapFrom('center', 1, undefined, 0);
+    expect(result).not.toBeNull();
+    expect(result!.newState.cycleIndex).toBe(1);
+    // center@1: width=1280, centered → x = (1920-1280)/2 = 320
+    expect(result!.geometry).toEqual({ x: 320, y: 0, width: 1280, height: 1080 });
+  });
+
+  it('center third: jumps to cycleIndex 2 (1/3 width, centered)', () => {
+    const result = resolveSnapFrom('center', 2, undefined, 0);
+    expect(result).not.toBeNull();
+    expect(result!.newState.cycleIndex).toBe(2);
+    // center@2: width=640, centered → x = (1920-640)/2 = 640
+    expect(result!.geometry).toEqual({ x: 640, y: 0, width: 640, height: 1080 });
   });
 });

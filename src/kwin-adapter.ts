@@ -4,8 +4,8 @@
 declare const workspace: any;
 declare function registerShortcut(name: string, desc: string, key: string, cb: () => void): void;
 
-// ClientAreaOption enum value for the maximize/work area (excludes panels)
-const MaximizeArea = 2;
+// ClientAreaOption enum — accessed as properties on the workspace object via Q_ENUM
+// workspace.MaximizeArea = 2 (excludes panels)
 
 import type { KWinAdapter, Rect, Screen } from './adapter.js';
 
@@ -35,7 +35,7 @@ export function createKWinAdapter(): KWinAdapter {
     isWindowMaximized(windowId: string): boolean {
       const win = findWindow(windowId);
       if (!win) return false;
-      const area = workspace.clientArea(MaximizeArea, win.output);
+      const area = workspace.clientArea(workspace.MaximizeArea, win.output, workspace.currentDesktop);
       const g = win.frameGeometry;
       return Math.round(g.x) === Math.round(area.x) &&
              Math.round(g.y) === Math.round(area.y) &&
@@ -54,18 +54,26 @@ export function createKWinAdapter(): KWinAdapter {
     },
 
     getScreens(): Screen[] {
-      return (workspace.screens as any[]).map((output: any, index: number) => ({
-        index,
-        workArea: toRect(workspace.clientArea(MaximizeArea, output)),
-      }));
+      const screens: Screen[] = [];
+      const outputs = workspace.screens;
+      const count: number = outputs.length;
+      for (let i = 0; i < count; i++) {
+        screens.push({
+          index: i,
+          workArea: toRect(workspace.clientArea(workspace.MaximizeArea, outputs[i], workspace.currentDesktop)),
+        });
+      }
+      return screens;
     },
 
     getWindowScreen(windowId: string): number | null {
       const win = findWindow(windowId);
       if (!win) return null;
-      const outputs: any[] = workspace.screens;
-      const idx = outputs.indexOf(win.output);
-      return idx === -1 ? null : idx;
+      const outputs = workspace.screens;
+      for (let i = 0; i < outputs.length; i++) {
+        if (outputs[i] === win.output) return i;
+      }
+      return null;
     },
 
     registerShortcut(id: string, description: string, defaultKey: string, callback: () => void): void {
