@@ -1,6 +1,6 @@
 # krect
 
-krect is a KWin script for KDE Plasma 6 that replicates the keyboard-driven window snapping behavior of [Rectangle](https://rectangleapp.com/) for macOS. It registers 24 global shortcuts using the same default `Ctrl+Alt` key layout as Rectangle, with cycling through multiple widths on repeated presses.
+krect is a KWin script for KDE Plasma 6 that replicates the keyboard-driven window snapping behavior of [Rectangle](https://rectangleapp.com/) for macOS. It registers 24 global shortcuts inspired by Rectangle's `Ctrl+Opt` bindings, adapted to `Meta+Ctrl` on Linux, with cycling through multiple widths on repeated presses.
 
 ## Requirements
 
