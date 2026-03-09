@@ -103,9 +103,13 @@ export function createKWinAdapter(): KWinAdapter {
     onScreenChanged(callback: () => void): void {
       try {
         workspace.screensChanged.connect(callback);
+      } catch (e) {
+        console.error('krect: screensChanged connect failed', e);
+      }
+      try {
         workspace.virtualScreenGeometryChanged.connect(callback);
       } catch (e) {
-        console.error('krect: onScreenChanged connect failed', e);
+        console.error('krect: virtualScreenGeometryChanged connect failed', e);
       }
     },
   };
