@@ -16,6 +16,7 @@ export interface KWinAdapter {
   setWindowGeometry(windowId: string, geometry: Rect): void;
   isWindowMaximized(windowId: string): boolean;
   unmaximizeWindow(windowId: string): void;
+  maximizeWindow(windowId: string): void;
   getScreens(): Screen[];
   getWindowScreen(windowId: string): number | null;
   registerShortcut(id: string, description: string, defaultKey: string, callback: () => void): void;

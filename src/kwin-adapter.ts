@@ -45,6 +45,11 @@ export function createKWinAdapter(): KWinAdapter {
       if (win) win.setMaximize(false, false);
     },
 
+    maximizeWindow(windowId: string): void {
+      const win = findWindow(windowId);
+      if (win) win.setMaximize(true, true);
+    },
+
     getScreens(): Screen[] {
       return (workspace.screens as any[]).map((output: any, index: number) => ({
         index,

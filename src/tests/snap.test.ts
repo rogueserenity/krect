@@ -45,6 +45,23 @@ describe('resolveSnap', () => {
     expect(resolveSnap('left', undefined, 99)).toBeNull();
   });
 
+  it('resets to cycle 0 when window was manually moved (stale state)', () => {
+    const state: WindowState = { position: 'left', cycleIndex: 1, screen: 0 };
+    // Window is not at the cached left@1 position — it was manually moved
+    const manualGeometry = { x: 100, y: 100, width: 800, height: 600 };
+    const result = resolveSnap('left', state, 0, manualGeometry);
+    expect(result!.newState.cycleIndex).toBe(0);
+    expect(result!.geometry).toEqual({ x: 0, y: 0, width: 960, height: 1080 });
+  });
+
+  it('continues cycling when geometry matches cached state (not stale)', () => {
+    const state: WindowState = { position: 'left', cycleIndex: 0, screen: 0 };
+    // Window is exactly at the cached left@0 position
+    const snappedGeometry = { x: 0, y: 0, width: 960, height: 1080 };
+    const result = resolveSnap('left', state, 0, snappedGeometry);
+    expect(result!.newState.cycleIndex).toBe(1);
+  });
+
   it('cycles through all 6 sixth positions', () => {
     let state: WindowState | undefined = undefined;
     for (let i = 0; i < 6; i++) {
