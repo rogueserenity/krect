@@ -1,0 +1,14 @@
+{
+  "release-type": "node",
+  "packages": {
+    ".": {
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "metadata.json",
+          "jsonpath": "$.KPlugin.Version"
+        }
+      ]
+    }
+  }
+}

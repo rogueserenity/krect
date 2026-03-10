@@ -7,10 +7,18 @@ import type { SnapPosition } from './core/geometry.js';
 
 const adapter = createKWinAdapter();
 
-buildCache(adapter.getScreens());
+try {
+  buildCache(adapter.getScreens());
+} catch (e) {
+  console.error('krect: initial buildCache failed', e);
+}
 
 adapter.onScreenChanged(() => {
-  buildCache(adapter.getScreens());
+  try {
+    buildCache(adapter.getScreens());
+  } catch (e) {
+    console.error('krect: buildCache on screen change failed', e);
+  }
 });
 
 adapter.onWindowClosed((windowId) => {
