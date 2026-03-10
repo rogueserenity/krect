@@ -6,9 +6,10 @@ import type { WindowState } from '../core/state.js';
 
 const screen0: Screen = { index: 0, workArea: { x: 0,    y: 0, width: 1920, height: 1080 } };
 const screen1: Screen = { index: 1, workArea: { x: 1920, y: 0, width: 2560, height: 1440 } };
+const screen2: Screen = { index: 2, workArea: { x: 5000, y: 0, width: 1920, height: 1080 } };
 
 beforeEach(() => {
-  buildCache([screen0, screen1]);
+  buildCache([screen0, screen1, screen2]);
 });
 
 describe('getNextScreenIndex', () => {
@@ -28,6 +29,10 @@ describe('getPrevScreenIndex', () => {
 
   it('wraps from first to last', () => {
     expect(getPrevScreenIndex(0, 2)).toBe(1);
+  });
+
+  it('decrements normally with 3 screens', () => {
+    expect(getPrevScreenIndex(2, 3)).toBe(1);
   });
 });
 
@@ -76,23 +81,24 @@ describe('resolveMonitorMove', () => {
     expect(result!.newState).toBeUndefined();
   });
 
-  it('clamps unsnapped window so it remains visible on target monitor', () => {
-    // Window at far right of screen0, would go off right edge of screen1
-    const geometry: Rect = { x: 1800, y: 0, width: 800, height: 600 };
+  it('clamps window off left edge so at least 1px remains visible', () => {
+    // Window is off the left edge of screen0 (x=-1000), moving to screen1 (x=1920)
+    // offsetX = -1000 + (1920 - 0) = 920
+    // left-clamp min = screen1.x - width + 1 = 1920 - 800 + 1 = 1121
+    // 920 < 1121, so clampedX = 1121
+    const geometry: Rect = { x: -1000, y: 0, width: 800, height: 600 };
     const result = resolveMonitorMove(geometry, 0, 1, undefined);
     expect(result).not.toBeNull();
-    // offsetX = 1800 + 1920 = 3720, but screen1 ends at 1920+2560=4480, so 4480-1 = 4479 max
-    // 3720 < 4479 so no right-side clamping needed
-    expect(result!.geometry.x).toBe(3720);
+    expect(result!.geometry.x).toBe(1121);
   });
 
-  it('clamps window that would go completely off right edge', () => {
-    const geometry: Rect = { x: 1900, y: 0, width: 800, height: 600 };
+  it('clamps window off right edge so at least 1px remains visible', () => {
+    // offsetX = 3000 + (1920 - 0) = 4920
+    // max x = screen1.x + screen1.width - 1 = 1920 + 2560 - 1 = 4479
+    // 4920 > 4479, so clampedX = 4479
+    const geometry: Rect = { x: 3000, y: 0, width: 800, height: 600 };
     const result = resolveMonitorMove(geometry, 0, 1, undefined);
     expect(result).not.toBeNull();
-    // offsetX = 1900 + 1920 = 3820
-    // max x = screen1.x + screen1.width - 1 = 1920 + 2560 - 1 = 4479
-    // 3820 < 4479, no clamping
-    expect(result!.geometry.x).toBe(3820);
+    expect(result!.geometry.x).toBe(4479);
   });
 });

@@ -27,8 +27,16 @@ export function getCycleCount(position: SnapPosition): number {
 // cycleIndex 0 = 1/2, 1 = 2/3, 2 = 1/3
 const CYCLE_FRACTIONS = [1 / 2, 2 / 3, 1 / 3] as const;
 
+function cycleFraction(cycleIndex: number): number {
+  return CYCLE_FRACTIONS[cycleIndex % EDGE_CYCLE_COUNT] ?? 1 / 2;
+}
+
 function cycleWidth(workArea: Rect, cycleIndex: number): number {
-  return Math.round(workArea.width * (CYCLE_FRACTIONS[cycleIndex % EDGE_CYCLE_COUNT] ?? 1 / 2));
+  return Math.round(workArea.width * cycleFraction(cycleIndex));
+}
+
+function cycleHeight(workArea: Rect, cycleIndex: number): number {
+  return Math.round(workArea.height * cycleFraction(cycleIndex));
 }
 
 function sixthCell(workArea: Rect, startCell: number, cycleIndex: number): Rect {
@@ -67,11 +75,11 @@ export function computeSnapGeometry(
         x: workArea.x,
         y: workArea.y,
         width: workArea.width,
-        height: Math.round(workArea.height * (CYCLE_FRACTIONS[cycleIndex % EDGE_CYCLE_COUNT] ?? 1 / 2)),
+        height: cycleHeight(workArea, cycleIndex),
       };
 
     case 'bottom': {
-      const h = Math.round(workArea.height * (CYCLE_FRACTIONS[cycleIndex % EDGE_CYCLE_COUNT] ?? 1 / 2));
+      const h = cycleHeight(workArea, cycleIndex);
       return { x: workArea.x, y: workArea.y + workArea.height - h, width: workArea.width, height: h };
     }
 
