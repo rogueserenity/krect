@@ -3,9 +3,14 @@
     "Name": "krect",
     "Description": "Rectangle-like keyboard-driven window snapping for KDE Plasma 6",
     "Icon": "preferences-system-windows",
-    "Authors": [{ "Email": "krect@rogueserenity.dev", "Name": "jay" }],
+    "Authors": [
+      {
+        "Email": "krect@rogueserenity.dev",
+        "Name": "jay"
+      }
+    ],
     "Id": "krect",
-    "Version": "0.1.0",
+    "Version": "0.2.0",
     "License": "MIT",
     "Website": "https://github.com/rogueserenity/krect"
   },
