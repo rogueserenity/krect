@@ -81,24 +81,35 @@ describe('resolveMonitorMove', () => {
     expect(result!.newState).toBeUndefined();
   });
 
-  it('clamps window off left edge so at least 1px remains visible', () => {
+  it('clamps window off left edge to target monitor left edge', () => {
     // Window is off the left edge of screen0 (x=-1000), moving to screen1 (x=1920)
     // offsetX = -1000 + (1920 - 0) = 920
-    // left-clamp min = screen1.x - width + 1 = 1920 - 800 + 1 = 1121
-    // 920 < 1121, so clampedX = 1121
+    // 920 < screen1.x (1920), so clampedX = 1920
     const geometry: Rect = { x: -1000, y: 0, width: 800, height: 600 };
     const result = resolveMonitorMove(geometry, 0, 1, undefined);
     expect(result).not.toBeNull();
-    expect(result!.geometry.x).toBe(1121);
+    expect(result!.geometry.x).toBe(1920);
   });
 
-  it('clamps window off right edge so at least 1px remains visible', () => {
-    // offsetX = 3000 + (1920 - 0) = 4920
-    // max x = screen1.x + screen1.width - 1 = 1920 + 2560 - 1 = 4479
-    // 4920 > 4479, so clampedX = 4479
+  it('places straddling window at its absolute position clamped to target monitor', () => {
+    // Window at x=1700 straddles screen0 (0..1919) and screen1 (1920..4479)
+    // KWin reports screen1 (window center is past screen1.x), so currentScreenIndex=1
+    // withinX: 1700 >= 1920? NO → use absolute x=1700
+    // clampedX = max(0, min(1920-800=1120, 1700)) = 1120
+    const geometry: Rect = { x: 1700, y: 0, width: 800, height: 600 };
+    const result = resolveMonitorMove(geometry, 1, 0, undefined);
+    expect(result).not.toBeNull();
+    expect(result!.geometry.x).toBe(1120);
+  });
+
+  it('clamps window straddling right edge of source to its absolute position on target', () => {
+    // Window at x=3000 straddles screen0 (0..1919) right edge — 3000+800=3800 > 1920
+    // withinX: NO → use absolute x=3000
+    // screen1 starts at 1920, max x = 1920+2560-800=3680
+    // clampedX = max(1920, min(3680, 3000)) = 3000
     const geometry: Rect = { x: 3000, y: 0, width: 800, height: 600 };
     const result = resolveMonitorMove(geometry, 0, 1, undefined);
     expect(result).not.toBeNull();
-    expect(result!.geometry.x).toBe(4479);
+    expect(result!.geometry.x).toBe(3000);
   });
 });

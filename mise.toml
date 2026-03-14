@@ -24,6 +24,6 @@ description = "Build and install the KWin script (first time)"
 run = "npm run install-kwin"
 
 [tasks.reload-kwin]
-alias = "r"
+alias = "rk"
 description = "Build, update, and reload the KWin script"
 run = "npm run reload-kwin"
