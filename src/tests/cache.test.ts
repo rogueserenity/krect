@@ -47,4 +47,10 @@ describe('buildCache', () => {
     buildCache([screen0]);
     expect(getSnapGeometry(1, 'left', 0)).toBeNull();
   });
+
+  it('clears the cache when called with an empty screens array', () => {
+    buildCache([]);
+    expect(getSnapGeometry(0, 'left', 0)).toBeNull();
+    expect(getSnapGeometry(1, 'left', 0)).toBeNull();
+  });
 });

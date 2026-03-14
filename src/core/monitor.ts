@@ -44,16 +44,21 @@ export function resolveMonitorMove(
   const currentWorkArea = getWorkArea(currentScreenIndex);
   if (currentWorkArea === null) return null;
 
-  const offsetX = windowGeometry.x + (targetWorkArea.x - currentWorkArea.x);
-  const offsetY = windowGeometry.y + (targetWorkArea.y - currentWorkArea.y);
+  const withinX = windowGeometry.x >= currentWorkArea.x &&
+    windowGeometry.x + windowGeometry.width <= currentWorkArea.x + currentWorkArea.width;
+  const withinY = windowGeometry.y >= currentWorkArea.y &&
+    windowGeometry.y + windowGeometry.height <= currentWorkArea.y + currentWorkArea.height;
+
+  const effectiveX = withinX ? windowGeometry.x + (targetWorkArea.x - currentWorkArea.x) : windowGeometry.x;
+  const effectiveY = withinY ? windowGeometry.y + (targetWorkArea.y - currentWorkArea.y) : windowGeometry.y;
 
   const clampedX = Math.max(
-    targetWorkArea.x - windowGeometry.width + 1,
-    Math.min(targetWorkArea.x + targetWorkArea.width - 1, offsetX)
+    targetWorkArea.x,
+    Math.min(targetWorkArea.x + targetWorkArea.width - windowGeometry.width, effectiveX)
   );
   const clampedY = Math.max(
-    targetWorkArea.y - windowGeometry.height + 1,
-    Math.min(targetWorkArea.y + targetWorkArea.height - 1, offsetY)
+    targetWorkArea.y,
+    Math.min(targetWorkArea.y + targetWorkArea.height - windowGeometry.height, effectiveY)
   );
 
   return {

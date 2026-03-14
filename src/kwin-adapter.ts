@@ -79,11 +79,16 @@ export function createKWinAdapter(): KWinAdapter {
     getWindowScreen(windowId: string): number | null {
       const win = findWindow(windowId);
       if (!win) return null;
-      const outputs = workspace.screens;
-      for (let i = 0; i < outputs.length; i++) {
-        if (outputs[i] === win.output) return i;
+      try {
+        const outputs = workspace.screens;
+        for (let i = 0; i < outputs.length; i++) {
+          if (outputs[i] === win.output) return i;
+        }
+        return null;
+      } catch (e) {
+        console.error('krect: getWindowScreen failed', e);
+        return null;
       }
-      return null;
     },
 
     registerShortcut(id: string, description: string, defaultKey: string, callback: () => void): void {

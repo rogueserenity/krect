@@ -13,6 +13,17 @@ function isStateStale(currentState: WindowState, currentGeometry: Rect, screenIn
   return cached === null || !rectsEqual(currentGeometry, cached);
 }
 
+function resolveEffectiveState(
+  currentState: WindowState | undefined,
+  currentGeometry: Rect | undefined,
+  screenIndex: number
+): WindowState | undefined {
+  if (currentState !== undefined && currentGeometry !== undefined && isStateStale(currentState, currentGeometry, screenIndex)) {
+    return undefined;
+  }
+  return currentState;
+}
+
 // resolveSnapFrom is used by shortcuts that are entry points into a cycle at a
 // specific index (e.g. "Left Two Thirds" starts at cycleIndex=1). If the window
 // is already snapped to the same position, the cycle continues normally from
@@ -24,10 +35,7 @@ export function resolveSnapFrom(
   screenIndex: number,
   currentGeometry?: Rect
 ): SnapResult | null {
-  const effectiveState =
-    currentState !== undefined && currentGeometry !== undefined && isStateStale(currentState, currentGeometry, screenIndex)
-      ? undefined
-      : currentState;
+  const effectiveState = resolveEffectiveState(currentState, currentGeometry, screenIndex);
 
   const cycleCount = getCycleCount(position);
 
@@ -54,10 +62,7 @@ export function resolveSnap(
   currentGeometry?: Rect
 ): SnapResult | null {
   // If the window was manually moved since last snap, treat as fresh
-  const effectiveState =
-    currentState !== undefined && currentGeometry !== undefined && isStateStale(currentState, currentGeometry, screenIndex)
-      ? undefined
-      : currentState;
+  const effectiveState = resolveEffectiveState(currentState, currentGeometry, screenIndex);
 
   const cycleCount = getCycleCount(position);
   const cycleIndex = computeNextCycleIndex(effectiveState, position, cycleCount);
