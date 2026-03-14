@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 # Build output
 contents/code/main.js
+
+# VS Code
+.vscode/
