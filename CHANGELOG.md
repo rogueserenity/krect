@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/rogueserenity/krect/compare/krect-v0.2.0...krect-v0.2.1) (2026-03-14)
+
+
+### Bug Fixes
+
+* force node 24 for release action and ignore vscode files ([#5](https://github.com/rogueserenity/krect/issues/5)) ([5285770](https://github.com/rogueserenity/krect/commit/5285770c0fb766084c4ba0cfe973af90c16dc1c1))
+* update release workflow to node 24 ([#7](https://github.com/rogueserenity/krect/issues/7)) ([f298451](https://github.com/rogueserenity/krect/commit/f29845183a5a2339c672971735f9dbe92a75ca66))
+
 ## [0.2.0](https://github.com/rogueserenity/krect/compare/krect-v0.1.0...krect-v0.2.0) (2026-03-10)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "krect",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Provide Rectangle-like window tiling shortcuts for KDE Plasma 6.",
   "scripts": {
     "build": "esbuild src/main.ts --bundle --platform=neutral --target=es6 --outfile=contents/code/main.js",
