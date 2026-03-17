@@ -18,8 +18,12 @@ run = "npm test"
 description = "Typecheck and lint"
 run = "npm run check"
 
+[tasks.package]
+description = "Build and create krect.zip for KDE Store distribution"
+run = "npm run package"
+
 [tasks.install-kwin]
-alias = "i"
+alias = "ik"
 description = "Build and install the KWin script (first time)"
 run = "npm run install-kwin"
 

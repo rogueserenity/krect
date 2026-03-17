@@ -140,6 +140,7 @@ vite.config.ts.timestamp-*
 
 # Build output
 contents/code/main.js
+krect.zip
 
 # VS Code
 .vscode/
