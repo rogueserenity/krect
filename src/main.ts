@@ -115,6 +115,11 @@ adapter.registerShortcut('krect-right-third',       'krect: Right Third',       
 adapter.registerShortcut('krect-center-two-thirds', 'krect: Center Two Thirds', 'Meta+Ctrl+R',          () => snapFrom('center', 1));
 adapter.registerShortcut('krect-center-third',      'krect: Center Third',      'Meta+Ctrl+F',          () => snapFrom('center', 2));
 
+// Three-quarter snaps
+adapter.registerShortcut('krect-left-three-quarters',   'krect: Left Three Quarters',   'Meta+Ctrl+B', () => snap('left-three-quarters'));
+adapter.registerShortcut('krect-center-three-quarters', 'krect: Center Three Quarters', 'Meta+Ctrl+N', () => snap('center-three-quarters'));
+adapter.registerShortcut('krect-right-three-quarters',  'krect: Right Three Quarters',  'Meta+Ctrl+M', () => snap('right-three-quarters'));
+
 // Corner snaps
 adapter.registerShortcut('krect-top-left',        'krect: Top Left',        'Meta+Ctrl+U',          () => snap('top-left'));
 adapter.registerShortcut('krect-top-right',       'krect: Top Right',       'Meta+Ctrl+I',          () => snap('top-right'));

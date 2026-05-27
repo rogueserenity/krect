@@ -4,6 +4,7 @@ export type SnapPosition =
   | 'left' | 'right' | 'top' | 'bottom'
   | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
   | 'center'
+  | 'left-three-quarters' | 'center-three-quarters' | 'right-three-quarters'
   | 'sixth-1' | 'sixth-2' | 'sixth-3' | 'sixth-4' | 'sixth-5' | 'sixth-6';
 
 export const EDGE_CYCLE_COUNT = 3;
@@ -13,6 +14,7 @@ export const ALL_SNAP_POSITIONS: SnapPosition[] = [
   'left', 'right', 'top', 'bottom',
   'top-left', 'top-right', 'bottom-left', 'bottom-right',
   'center',
+  'left-three-quarters', 'center-three-quarters', 'right-three-quarters',
   'sixth-1', 'sixth-2', 'sixth-3', 'sixth-4', 'sixth-5', 'sixth-6',
 ];
 
@@ -21,7 +23,9 @@ export function rectsEqual(a: Rect, b: Rect): boolean {
 }
 
 export function getCycleCount(position: SnapPosition): number {
-  return position.startsWith('sixth-') ? SIXTH_CYCLE_COUNT : EDGE_CYCLE_COUNT;
+  if (position.startsWith('sixth-')) return SIXTH_CYCLE_COUNT;
+  if (position.endsWith('-three-quarters')) return 1;
+  return EDGE_CYCLE_COUNT;
 }
 
 // cycleIndex 0 = 1/2, 1 = 2/3, 2 = 1/3
@@ -102,6 +106,21 @@ export function computeSnapGeometry(
 
     case 'center':
       return { x: workArea.x + Math.round((workArea.width - w) / 2), y: workArea.y, width: w, height: workArea.height };
+
+    case 'left-three-quarters': {
+      const w34 = Math.round(workArea.width * 3 / 4);
+      return { x: workArea.x, y: workArea.y, width: w34, height: workArea.height };
+    }
+
+    case 'right-three-quarters': {
+      const w34 = Math.round(workArea.width * 3 / 4);
+      return { x: workArea.x + workArea.width - w34, y: workArea.y, width: w34, height: workArea.height };
+    }
+
+    case 'center-three-quarters': {
+      const w34 = Math.round(workArea.width * 3 / 4);
+      return { x: workArea.x + Math.round((workArea.width - w34) / 2), y: workArea.y, width: w34, height: workArea.height };
+    }
 
     case 'sixth-1': return sixthCell(workArea, 0, cycleIndex);
     case 'sixth-2': return sixthCell(workArea, 1, cycleIndex);
