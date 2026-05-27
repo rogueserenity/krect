@@ -4,18 +4,39 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
-  release:
+  release-please:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      issues: write
       pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Generate App Token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          app-id: ${{ secrets.RS_TOKEN_APP_ID }}
+          private-key: ${{ secrets.RS_TOKEN_APP_PK }}
+
+      - uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
+        id: release
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+  build-release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0
-          persist-credentials: false
 
       - name: Generate App Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -33,6 +54,14 @@ jobs:
 
       - run: npm ci
 
-      - run: semantic-release
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Build and package
+        run: |
+          npm run build
+          zip -r "krect-${{ needs.release-please.outputs.tag_name }}.kwinscript" metadata.json contents/
+
+      - name: Upload release artifact
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: "krect-${{ needs.release-please.outputs.tag_name }}.kwinscript"
+          token: ${{ steps.app-token.outputs.token }}
