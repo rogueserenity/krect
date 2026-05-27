@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/rogueserenity/krect/compare/v1.1.0...v1.1.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* exclude component name from release tags ([#33](https://github.com/rogueserenity/krect/issues/33)) ([11091ec](https://github.com/rogueserenity/krect/commit/11091ecd2b10707a37eea9dfd30a51533a64623c))
+
 ## [1.1.0](https://github.com/rogueserenity/krect/compare/krect-v1.0.0...krect-v1.1.0) (2026-05-27)
 
 
