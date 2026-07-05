@@ -1,25 +1,10 @@
 import { createKWinAdapter } from './kwin-adapter.js';
-import { buildCache } from './core/cache.js';
 import { getWindowState, setWindowState, clearWindowState } from './core/state.js';
 import { resolveSnap, resolveSnapFrom } from './core/snap.js';
 import { resolveMonitorMove, getNextScreenIndex, getPrevScreenIndex } from './core/monitor.js';
 import type { SnapPosition } from './core/geometry.js';
 
 const adapter = createKWinAdapter();
-
-try {
-  buildCache(adapter.getScreens());
-} catch (e) {
-  console.error('krect: initial buildCache failed', e);
-}
-
-adapter.onScreenChanged(() => {
-  try {
-    buildCache(adapter.getScreens());
-  } catch (e) {
-    console.error('krect: buildCache on screen change failed', e);
-  }
-});
 
 adapter.onWindowClosed((windowId) => {
   clearWindowState(windowId);
@@ -35,7 +20,7 @@ function snap(position: SnapPosition): void {
   const currentGeometry = adapter.getWindowGeometry(windowId);
   if (currentGeometry === null) return;
 
-  const result = resolveSnap(position, getWindowState(windowId), screenIndex, currentGeometry);
+  const result = resolveSnap(position, getWindowState(windowId), screenIndex, adapter.getScreens(), currentGeometry);
   if (result === null) return;
 
   if (adapter.isWindowMaximized(windowId)) {
@@ -56,7 +41,7 @@ function snapFrom(position: SnapPosition, startIndex: number): void {
   const currentGeometry = adapter.getWindowGeometry(windowId);
   if (currentGeometry === null) return;
 
-  const result = resolveSnapFrom(position, startIndex, getWindowState(windowId), screenIndex, currentGeometry);
+  const result = resolveSnapFrom(position, startIndex, getWindowState(windowId), screenIndex, adapter.getScreens(), currentGeometry);
   if (result === null) return;
 
   if (adapter.isWindowMaximized(windowId)) {
@@ -89,7 +74,7 @@ function moveToMonitor(direction: 'next' | 'prev'): void {
   const currentGeometry = adapter.getWindowGeometry(windowId);
   if (currentGeometry === null) return;
 
-  const result = resolveMonitorMove(currentGeometry, currentScreenIndex, targetScreenIndex, getWindowState(windowId));
+  const result = resolveMonitorMove(currentGeometry, currentScreenIndex, targetScreenIndex, screens, getWindowState(windowId));
   if (result === null) return;
 
   adapter.setWindowGeometry(windowId, result.geometry);

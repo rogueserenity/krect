@@ -1,6 +1,5 @@
-import type { Rect } from '../adapter.js';
-import { getCycleCount, rectsEqual, type SnapPosition } from './geometry.js';
-import { getSnapGeometry } from './cache.js';
+import { findWorkArea, type Rect, type Screen } from '../adapter.js';
+import { computeSnapGeometry, getCycleCount, rectsEqual, type SnapPosition } from './geometry.js';
 import { computeNextCycleIndex, type WindowState } from './state.js';
 
 export interface SnapResult {
@@ -8,17 +7,17 @@ export interface SnapResult {
   newState: WindowState;
 }
 
-function isStateStale(currentState: WindowState, currentGeometry: Rect, screenIndex: number): boolean {
-  const cached = getSnapGeometry(screenIndex, currentState.position, currentState.cycleIndex);
-  return cached === null || !rectsEqual(currentGeometry, cached);
+function isStateStale(currentState: WindowState, currentGeometry: Rect, workArea: Rect): boolean {
+  const cached = computeSnapGeometry(workArea, currentState.position, currentState.cycleIndex);
+  return !rectsEqual(currentGeometry, cached);
 }
 
 function resolveEffectiveState(
   currentState: WindowState | undefined,
   currentGeometry: Rect | undefined,
-  screenIndex: number
+  workArea: Rect
 ): WindowState | undefined {
-  if (currentState !== undefined && currentGeometry !== undefined && isStateStale(currentState, currentGeometry, screenIndex)) {
+  if (currentState !== undefined && currentGeometry !== undefined && isStateStale(currentState, currentGeometry, workArea)) {
     return undefined;
   }
   return currentState;
@@ -33,9 +32,13 @@ export function resolveSnapFrom(
   startIndex: number,
   currentState: WindowState | undefined,
   screenIndex: number,
+  screens: Screen[],
   currentGeometry?: Rect
 ): SnapResult | null {
-  const effectiveState = resolveEffectiveState(currentState, currentGeometry, screenIndex);
+  const workArea = findWorkArea(screens, screenIndex);
+  if (workArea === null) return null;
+
+  const effectiveState = resolveEffectiveState(currentState, currentGeometry, workArea);
 
   const cycleCount = getCycleCount(position);
 
@@ -46,11 +49,8 @@ export function resolveSnapFrom(
     cycleIndex = startIndex % cycleCount;
   }
 
-  const geometry = getSnapGeometry(screenIndex, position, cycleIndex);
-  if (geometry === null) return null;
-
   return {
-    geometry,
+    geometry: computeSnapGeometry(workArea, position, cycleIndex),
     newState: { position, cycleIndex, screen: screenIndex },
   };
 }
@@ -59,19 +59,20 @@ export function resolveSnap(
   position: SnapPosition,
   currentState: WindowState | undefined,
   screenIndex: number,
+  screens: Screen[],
   currentGeometry?: Rect
 ): SnapResult | null {
+  const workArea = findWorkArea(screens, screenIndex);
+  if (workArea === null) return null;
+
   // If the window was manually moved since last snap, treat as fresh
-  const effectiveState = resolveEffectiveState(currentState, currentGeometry, screenIndex);
+  const effectiveState = resolveEffectiveState(currentState, currentGeometry, workArea);
 
   const cycleCount = getCycleCount(position);
   const cycleIndex = computeNextCycleIndex(effectiveState, position, cycleCount);
-  const geometry = getSnapGeometry(screenIndex, position, cycleIndex);
-
-  if (geometry === null) return null;
 
   return {
-    geometry,
+    geometry: computeSnapGeometry(workArea, position, cycleIndex),
     newState: { position, cycleIndex, screen: screenIndex },
   };
 }

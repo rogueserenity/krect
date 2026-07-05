@@ -64,10 +64,8 @@ export function createKWinAdapter(): KWinAdapter {
         const outputs = workspace.screens;
         const count: number = outputs.length;
         for (let i = 0; i < count; i++) {
-          screens.push({
-            index: i,
-            workArea: toRect(workspace.clientArea(workspace.MaximizeArea, outputs[i], workspace.currentDesktop)),
-          });
+          const workArea = toRect(workspace.clientArea(workspace.MaximizeArea, outputs[i], workspace.currentDesktop));
+          screens.push({ index: i, workArea });
         }
         return screens;
       } catch (e) {
@@ -102,19 +100,6 @@ export function createKWinAdapter(): KWinAdapter {
         });
       } catch (e) {
         console.error('krect: onWindowClosed connect failed', e);
-      }
-    },
-
-    onScreenChanged(callback: () => void): void {
-      try {
-        workspace.screensChanged.connect(callback);
-      } catch (e) {
-        console.error('krect: screensChanged connect failed', e);
-      }
-      try {
-        workspace.virtualScreenGeometryChanged.connect(callback);
-      } catch (e) {
-        console.error('krect: virtualScreenGeometryChanged connect failed', e);
       }
     },
   };

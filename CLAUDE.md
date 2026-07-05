@@ -15,16 +15,15 @@ KWin script that replicates Rectangle window snapping for KDE Plasma 6. TypeScri
 - **Never use `npx`** — mise adds `./node_modules/.bin` to PATH, so run local binaries directly (e.g. `vitest`, `esbuild`)
 - **No `mise exec`** — shell is configured with mise activated, run tools directly
 - All KWin API calls go through `KWinAdapter` — core logic never touches KWin globals
-- `geometry.ts` is called only by `cache.ts` — all other modules use the cache
+- No persistent work-area cache — `adapter.getScreens()` is called fresh on every shortcut press and threaded into `snap.ts`/`monitor.ts`, which call `geometry.ts` directly. This is deliberate: a cache built once (even lazily) can permanently lock in a stale work area if a panel's strut registers with KWin after the value was captured (see git history on the portrait-panel bug)
 
 ## Architecture
-- `src/adapter.ts` — KWinAdapter interface + shared types (Rect, Screen)
+- `src/adapter.ts` — KWinAdapter interface + shared types (Rect, Screen) + `findWorkArea` helper
 - `src/kwin-adapter.ts` — KWin implementation (not unit tested)
 - `src/main.ts` — entry point, shortcut registration
 - `src/core/geometry.ts` — pure snap geometry calculations
 - `src/core/state.ts` — per-window state (position, cycleIndex, screen)
-- `src/core/cache.ts` — precomputed snap geometries per monitor, invalidates on screen change
-- `src/core/snap.ts` — core snap logic, uses state + cache
+- `src/core/snap.ts` — core snap logic, uses state + live screen list
 - `src/core/monitor.ts` — monitor cycling, geometry reprojection
 - `src/tests/` — Vitest unit tests for all core modules
 

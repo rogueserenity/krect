@@ -10,6 +10,10 @@ export interface Screen {
   workArea: Rect;
 }
 
+export function findWorkArea(screens: Screen[], screenIndex: number): Rect | null {
+  return screens.find((s) => s.index === screenIndex)?.workArea ?? null;
+}
+
 export interface KWinAdapter {
   getActiveWindowId(): string | null;
   getWindowGeometry(windowId: string): Rect | null;
@@ -21,5 +25,4 @@ export interface KWinAdapter {
   getWindowScreen(windowId: string): number | null;
   registerShortcut(id: string, description: string, defaultKey: string, callback: () => void): void;
   onWindowClosed(callback: (windowId: string) => void): void;
-  onScreenChanged(callback: () => void): void;
 }

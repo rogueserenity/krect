@@ -1,6 +1,5 @@
-import type { Rect } from '../adapter.js';
-import { rectsEqual } from './geometry.js';
-import { getSnapGeometry, getWorkArea } from './cache.js';
+import { findWorkArea, type Rect, type Screen } from '../adapter.js';
+import { computeSnapGeometry, rectsEqual } from './geometry.js';
 import type { WindowState } from './state.js';
 
 export function getNextScreenIndex(currentIndex: number, totalScreens: number): number {
@@ -14,11 +13,14 @@ export function getPrevScreenIndex(currentIndex: number, totalScreens: number): 
 export function isSnapped(
   windowGeometry: Rect,
   screenIndex: number,
+  screens: Screen[],
   state: WindowState | undefined
 ): boolean {
   if (state === undefined) return false;
-  const cached = getSnapGeometry(screenIndex, state.position, state.cycleIndex);
-  return cached !== null && rectsEqual(windowGeometry, cached);
+  const workArea = findWorkArea(screens, screenIndex);
+  if (workArea === null) return false;
+  const cached = computeSnapGeometry(workArea, state.position, state.cycleIndex);
+  return rectsEqual(windowGeometry, cached);
 }
 
 export interface MonitorMoveResult {
@@ -30,18 +32,18 @@ export function resolveMonitorMove(
   windowGeometry: Rect,
   currentScreenIndex: number,
   targetScreenIndex: number,
+  screens: Screen[],
   state: WindowState | undefined
 ): MonitorMoveResult | null {
-  const targetWorkArea = getWorkArea(targetScreenIndex);
+  const targetWorkArea = findWorkArea(screens, targetScreenIndex);
   if (targetWorkArea === null) return null;
 
-  if (isSnapped(windowGeometry, currentScreenIndex, state) && state !== undefined) {
-    const geometry = getSnapGeometry(targetScreenIndex, state.position, state.cycleIndex);
-    if (geometry === null) return null;
+  if (isSnapped(windowGeometry, currentScreenIndex, screens, state) && state !== undefined) {
+    const geometry = computeSnapGeometry(targetWorkArea, state.position, state.cycleIndex);
     return { geometry, newState: { ...state, screen: targetScreenIndex } };
   }
 
-  const currentWorkArea = getWorkArea(currentScreenIndex);
+  const currentWorkArea = findWorkArea(screens, currentScreenIndex);
   if (currentWorkArea === null) return null;
 
   const withinX = windowGeometry.x >= currentWorkArea.x &&
