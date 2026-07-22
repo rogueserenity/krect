@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/rogueserenity/krect/compare/v1.1.1...v1.1.2) (2026-07-22)
+
+
+### Bug Fixes
+
+* **snap:** recompute work area on every shortcut instead of a startup cache ([#40](https://github.com/rogueserenity/krect/issues/40)) ([3286553](https://github.com/rogueserenity/krect/commit/3286553e7545667b5964f510ebc12e5004af3ab4))
+
 ## [1.1.1](https://github.com/rogueserenity/krect/compare/v1.1.0...v1.1.1) (2026-05-27)
 
 
